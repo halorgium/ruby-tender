@@ -21,9 +21,9 @@ module DL
       assert_nil f.call(10)
     end
 
-    def test_sinf
-      f = Function.new(CFunc.new(@libm['sinf'], TYPE_FLOAT, 'sinf'),
-                       [TYPE_FLOAT])
+    def test_sin
+      f = Function.new(CFunc.new(@libm['sin'], TYPE_DOUBLE, 'sin'),
+                       [TYPE_DOUBLE])
       assert_in_delta 1.0, f.call(90 * Math::PI / 180), 0.0001
     end
 
