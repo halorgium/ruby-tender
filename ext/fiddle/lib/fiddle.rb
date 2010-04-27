@@ -21,6 +21,7 @@ module Fiddle
   end
 
   def self.last_error= error
+    Thread.current[:__DL2_LAST_ERROR__] = error
     Thread.current[:__FIDDLE_LAST_ERROR__] = error
   end
 end

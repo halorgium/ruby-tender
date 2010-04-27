@@ -47,7 +47,7 @@ const rb_data_type_t closure_data_type = {
 };
 
 void
-dlc_callback(ffi_cif *cif, void *resp, void **args, void *ctx)
+callback(ffi_cif *cif, void *resp, void **args, void *ctx)
 {
     VALUE self      = (VALUE)ctx;
     VALUE rbargs    = rb_iv_get(self, "@args");
@@ -55,7 +55,10 @@ dlc_callback(ffi_cif *cif, void *resp, void **args, void *ctx)
     int argc        = RARRAY_LENINT(rbargs);
     VALUE *params   = xcalloc(argc, sizeof(VALUE *));
     VALUE ret;
+    VALUE cPointer;
     int i, type;
+
+    cPointer = rb_const_get(mFiddle, rb_intern("Pointer"));
 
     for (i = 0; i < argc; i++) {
         type = NUM2INT(RARRAY_PTR(rbargs)[i]);
@@ -67,7 +70,8 @@ dlc_callback(ffi_cif *cif, void *resp, void **args, void *ctx)
 	    params[i] = INT2NUM(*(int *)args[i]);
 	    break;
 	  case TYPE_VOIDP:
-	    params[i] = rb_dlptr_new(*(void **)args[i], 0, NULL);
+            params[i] = rb_funcall(cPointer, rb_intern("[]"), 1,
+              PTR2NUM(*(void **)args[i]));
 	    break;
 	  case TYPE_LONG:
 	    params[i] = LONG2NUM(*(long *)args[i]);
@@ -188,10 +192,10 @@ initialize(int rbargc, VALUE argv[], VALUE self)
 	rb_raise(rb_eRuntimeError, "error prepping CIF %d", result);
 
 #ifndef MACOSX
-    result = ffi_prep_closure_loc(pcl, cif, dlc_callback,
+    result = ffi_prep_closure_loc(pcl, cif, callback,
 		(void *)self, cl->code);
 #else
-    result = ffi_prep_closure(pcl, cif, dlc_callback, (void *)self);
+    result = ffi_prep_closure(pcl, cif, callback, (void *)self);
     cl->code = (void *)pcl;
     mprotect(pcl, sizeof(pcl), PROT_READ | PROT_EXEC);
 #endif

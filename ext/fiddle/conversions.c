@@ -87,6 +87,9 @@ generic_to_value(VALUE rettype, fiddle_generic retval)
 {
     int signed_p = 1;
     int type = NUM2INT(rettype);
+    VALUE cPointer;
+
+    cPointer = rb_const_get(mFiddle, rb_intern("Pointer"));
 
     if (type < 0) {
 	type = -1 * type;
@@ -97,7 +100,8 @@ generic_to_value(VALUE rettype, fiddle_generic retval)
       case TYPE_VOID:
 	return Qnil;
       case TYPE_VOIDP:
-	return rb_dlptr_new((void *)retval.pointer, 0, NULL);
+        return rb_funcall(cPointer, rb_intern("[]"), 1,
+          PTR2NUM((void *)retval.pointer));
       case TYPE_CHAR:
       case TYPE_SHORT:
       case TYPE_INT:
