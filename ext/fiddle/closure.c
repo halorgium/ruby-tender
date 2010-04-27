@@ -55,11 +55,11 @@ dlc_callback(ffi_cif *cif, void *resp, void **args, void *ctx)
     int argc        = RARRAY_LENINT(rbargs);
     VALUE *params   = xcalloc(argc, sizeof(VALUE *));
     VALUE ret;
-    int i, dl_type;
+    int i, type;
 
     for (i = 0; i < argc; i++) {
-        dl_type = NUM2INT(RARRAY_PTR(rbargs)[i]);
-        switch (dl_type) {
+        type = NUM2INT(RARRAY_PTR(rbargs)[i]);
+        switch (type) {
 	  case TYPE_VOID:
 	    argc = 0;
 	    break;
@@ -87,14 +87,14 @@ dlc_callback(ffi_cif *cif, void *resp, void **args, void *ctx)
 	    break;
 #endif
 	  default:
-	    rb_raise(rb_eRuntimeError, "closure args: %d", dl_type);
+	    rb_raise(rb_eRuntimeError, "closure args: %d", type);
         }
     }
 
     ret = rb_funcall2(self, rb_intern("call"), argc, params);
 
-    dl_type = NUM2INT(ctype);
-    switch (dl_type) {
+    type = NUM2INT(ctype);
+    switch (type) {
       case TYPE_VOID:
 	break;
       case TYPE_LONG:
@@ -121,7 +121,7 @@ dlc_callback(ffi_cif *cif, void *resp, void **args, void *ctx)
 	break;
 #endif
       default:
-	rb_raise(rb_eRuntimeError, "closure retval: %d", dl_type);
+	rb_raise(rb_eRuntimeError, "closure retval: %d", type);
     }
     xfree(params);
 }
