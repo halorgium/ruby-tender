@@ -88,11 +88,12 @@ function_call(int argc, VALUE argv[], VALUE self)
     fiddle_generic *generic_args;
     void **values;
     void * fun_ptr;
-    VALUE cfunc, types;
+    VALUE cfunc, types, cPointer;
     int i;
 
-    cfunc = rb_iv_get(self, "@ptr");
-    types = rb_iv_get(self, "@args");
+    cfunc    = rb_iv_get(self, "@ptr");
+    types    = rb_iv_get(self, "@args");
+    cPointer = rb_const_get(mFiddle, rb_intern("Pointer"));
 
     if(argc != RARRAY_LENINT(types)) {
 	rb_raise(rb_eArgError, "wrong number of arguments (%d for %d)",
@@ -109,13 +110,11 @@ function_call(int argc, VALUE argv[], VALUE self)
 	VALUE src = argv[i];
 
 	if(NUM2INT(type) == TYPE_VOIDP) {
-#if 0
 	    if(NIL_P(src)) {
 		src = INT2NUM(0);
-	    } else if(rb_cDLCPtr != CLASS_OF(src)) {
-	        src = rb_funcall(rb_cDLCPtr, rb_intern("[]"), 1, src);
+	    } else if(cPointer != CLASS_OF(src)) {
+	        src = rb_funcall(cPointer, rb_intern("[]"), 1, src);
 	    }
-#endif
 	    src = rb_Integer(src);
 	}
 
@@ -126,11 +125,9 @@ function_call(int argc, VALUE argv[], VALUE self)
 
     ffi_call(cif, NUM2PTR(rb_Integer(cfunc)), &retval, values);
 
-#if 0
-    rb_dl_set_last_error(self, INT2NUM(errno));
+    rb_funcall(mFiddle, rb_intern("last_error="), 1, INT2NUM(errno));
 #if defined(HAVE_WINDOWS_H)
-    rb_dl_set_win32_last_error(self, INT2NUM(GetLastError()));
-#endif
+    rb_funcall(mFiddle, rb_intern("win32_last_error="), 1, INT2NUM(errno));
 #endif
 
     xfree(values);
@@ -155,4 +152,4 @@ Init_fiddle_function(void)
     rb_define_method(cFiddleFunction, "call", function_call, -1);
     rb_define_method(cFiddleFunction, "initialize", initialize, -1);
 }
-/* vim: set noet sw=4 sts=4 */
+/* vim: set noet sws=4 sw=4: */

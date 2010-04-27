@@ -2,15 +2,20 @@
 #define FIDDLE_H
 
 #include <ruby.h>
+#include <errno.h>
+
+#if defined(HAVE_WINDOWS_H)
+#include <windows.h>
+#endif
+
+#ifdef HAVE_SYS_MMAN_H
+#include <sys/mman.h>
+#endif
 
 #ifdef USE_HEADER_HACKS
 #include <ffi/ffi.h>
 #else
 #include <ffi.h>
-#endif
-
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
 #endif
 
 #include <closure.h>

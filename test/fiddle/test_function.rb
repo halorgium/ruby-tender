@@ -2,6 +2,11 @@ require_relative 'helper'
 
 module Fiddle
   class TestFunction < Fiddle::TestCase
+    def setup
+      super
+      Fiddle.last_error = nil
+    end
+
     def test_default_abi
       func = Function.new(@libm['sin'], [TYPE_DOUBLE], TYPE_DOUBLE)
       assert_equal Function::DEFAULT, func.abi
@@ -40,6 +45,14 @@ module Fiddle
       assert_raises(ArgumentError) do
         func.call
       end
+    end
+
+    def test_last_error
+      func = Function.new(@libc['strcpy'], [TYPE_VOIDP, TYPE_VOIDP], TYPE_VOIDP)
+
+      assert_nil Fiddle.last_error
+      str = func.call("000", "123")
+      refute_nil Fiddle.last_error
     end
   end
 end

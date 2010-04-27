@@ -18,6 +18,12 @@ void Init_fiddle()
     rb_define_const(mFiddle, "TYPE_FLOAT",     INT2NUM(TYPE_FLOAT));
     rb_define_const(mFiddle, "TYPE_DOUBLE",    INT2NUM(TYPE_DOUBLE));
 
+#if defined(HAVE_WINDOWS_H)
+    rb_define_const(mFiddle, "WINDOWS", Qtrue);
+#else
+    rb_define_const(mFiddle, "WINDOWS", Qfalse);
+#endif
+
     Init_fiddle_function();
     Init_fiddle_closure();
 }
