@@ -1,5 +1,9 @@
 require 'dl.so'
-require 'fiddle'
+
+begin
+  require 'fiddle'
+rescue LoadError
+end
 
 module DL
   def self.fiddle?

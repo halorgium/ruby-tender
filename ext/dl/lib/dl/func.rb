@@ -33,8 +33,8 @@ module DL
         else
           @unsigned = false
         end
-        if( proc )
-          bind(&proc)
+        if block_given?
+          bind(&block)
         end
       end
     end
