@@ -19,5 +19,6 @@ void Init_fiddle()
     rb_define_const(mFiddle, "TYPE_DOUBLE",    INT2NUM(TYPE_DOUBLE));
 
     Init_fiddle_function();
+    Init_fiddle_closure();
 }
 /* vim: set noet sws=4 sw=4: */

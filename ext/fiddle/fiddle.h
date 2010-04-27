@@ -9,6 +9,11 @@
 #include <ffi.h>
 #endif
 
+#ifdef HAVE_SYS_MMAN_H
+#include <sys/mman.h>
+#endif
+
+#include <closure.h>
 #include <conversions.h>
 #include <function.h>
 
