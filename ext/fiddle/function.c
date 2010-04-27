@@ -91,13 +91,18 @@ function_call(int argc, VALUE argv[], VALUE self)
     VALUE cfunc, types;
     int i;
 
+    cfunc = rb_iv_get(self, "@ptr");
+    types = rb_iv_get(self, "@args");
+
+    if(argc != RARRAY_LENINT(types)) {
+	rb_raise(rb_eArgError, "wrong number of arguments (%d for %d)",
+		argc, RARRAY_LENINT(types));
+    }
+
     TypedData_Get_Struct(self, ffi_cif, &function_data_type, cif);
 
     values = xcalloc((size_t)argc + 1, (size_t)sizeof(void *));
     generic_args = xcalloc((size_t)argc, (size_t)sizeof(fiddle_generic));
-
-    cfunc = rb_iv_get(self, "@ptr");
-    types = rb_iv_get(self, "@args");
 
     for (i = 0; i < argc; i++) {
 	VALUE type = RARRAY_PTR(types)[i];
