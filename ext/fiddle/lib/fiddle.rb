@@ -1,5 +1,6 @@
 require 'fiddle.so'
 require 'fiddle/function'
+require 'fiddle/closure'
 require 'dl'
 
 module Fiddle

@@ -37,5 +37,13 @@ module Fiddle
       func = Function.new(closure, [TYPE_INT], TYPE_INT)
       assert_equal 10, func.call(10)
     end
+
+    def test_block_caller
+      cb = Closure::BlockCaller.new(TYPE_INT, [TYPE_INT]) do |one|
+        one
+      end
+      func = Function.new(cb, [TYPE_INT], TYPE_INT)
+      assert_equal 11, func.call(11)
+    end
   end
 end
