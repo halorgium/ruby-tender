@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "gc.h"
 #include "constant.h"
+#include "probes.h"
 #include <stdio.h>
 #include <setjmp.h>
 #include <sys/types.h>
@@ -1188,6 +1189,7 @@ rb_newobj(void)
 
     obj = (VALUE)freelist;
     freelist = freelist->as.free.next;
+    if(RUBY_OBJECT_ALLOC_ENABLED()) RUBY_OBJECT_ALLOC();
 
     MEMZERO((void*)obj, RVALUE, 1);
 #ifdef GC_DEBUG

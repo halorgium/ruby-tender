@@ -298,6 +298,10 @@ enc/unicode/name2ctype.h: enc/unicode/name2ctype.kwd
 	@$(ECHO) preprocessing $<
 	$(Q) $(CPP) $(XCFLAGS) $(CPPFLAGS) $(COUTFLAG)$@ -E $< > $@
 
+probes.h:
+	@$(ECHO) translating probes $<
+	dtrace -o $@ -h -s probes.d
+
 clean-local::
 	$(Q)$(RM) ext/extinit.c ext/extinit.$(OBJEXT) ext/ripper/y.output
 	-$(Q)$(RM) $(pkgconfig_DATA)
