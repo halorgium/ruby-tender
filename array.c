@@ -15,6 +15,7 @@
 #include "ruby/util.h"
 #include "ruby/st.h"
 #include "ruby/encoding.h"
+#include "probes.h"
 #include "internal.h"
 
 #ifndef ARRAY_DEBUG
@@ -302,6 +303,10 @@ ary_alloc(VALUE klass)
     OBJSETUP(ary, klass, T_ARRAY);
     FL_SET_EMBED((VALUE)ary);
     ARY_SET_EMBED_LEN((VALUE)ary, 0);
+
+    if(RUBY_ARRAY_ALLOC_ENABLED()) {
+	RUBY_ARRAY_ALLOC(rb_sourcefile(), rb_sourceline());
+    }
 
     return (VALUE)ary;
 }

@@ -15,6 +15,7 @@
 #include "ruby/st.h"
 #include "ruby/util.h"
 #include "ruby/encoding.h"
+#include "probes.h"
 #include <errno.h>
 
 #ifdef __APPLE__
@@ -211,6 +212,9 @@ hash_alloc(VALUE klass)
     OBJSETUP(hash, klass, T_HASH);
 
     RHASH_IFNONE(hash) = Qnil;
+    if(RUBY_HASH_ALLOC_ENABLED()) {
+	RUBY_HASH_ALLOC(rb_sourcefile(), rb_sourceline());
+    }
 
     return (VALUE)hash;
 }

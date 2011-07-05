@@ -15,6 +15,7 @@
 #include "ruby/re.h"
 #include "ruby/encoding.h"
 #include "internal.h"
+#include "probes.h"
 #include <assert.h>
 
 #define BEG(no) (regs->beg[(no)])
@@ -376,6 +377,10 @@ str_alloc(VALUE klass)
     str->as.heap.ptr = 0;
     str->as.heap.len = 0;
     str->as.heap.aux.capa = 0;
+
+    if(RUBY_STRING_ALLOC_ENABLED()) {
+	RUBY_STRING_ALLOC(rb_sourcefile(), rb_sourceline());
+    }
 
     return (VALUE)str;
 }
