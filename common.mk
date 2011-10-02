@@ -2,7 +2,7 @@ bin: $(PROGRAM) $(WPROGRAM)
 lib: $(LIBRUBY)
 dll: $(LIBRUBY_SO)
 
-.SUFFIXES: .inc .h .c .y .i
+.SUFFIXES: .inc .h .c .y .i .d
 
 # V=0 quiet, V=1 verbose.  other values don't work.
 V = 0

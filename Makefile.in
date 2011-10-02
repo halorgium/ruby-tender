@@ -137,6 +137,7 @@ OBJDUMP       = @OBJDUMP@
 OBJCOPY       = @OBJCOPY@
 VCS           = @VCS@
 VCSUP         = @VCSUP@
+DTRACE        = @DTRACE@
 
 OBJEXT        = @OBJEXT@
 ASMEXT        = S
@@ -251,7 +252,7 @@ reconfig config.status:	$(srcdir)/configure $(srcdir)/enc/Makefile.in \
 $(srcdir)/configure: $(srcdir)/configure.in
 	$(CHDIR) $(srcdir) && exec $(AUTOCONF)
 
-incs: id.h
+incs: id.h probes.h
 
 # Things which should be considered:
 # * with gperf v.s. without gperf
@@ -308,9 +309,13 @@ enc/unicode/name2ctype.h: enc/unicode/name2ctype.kwd
 	@$(ECHO) preprocessing $<
 	$(Q) $(CPP) $(XCFLAGS) $(CPPFLAGS) $(COUTFLAG)$@ -E $< > $@
 
-probes.h:
+.d.h:
 	@$(ECHO) translating probes $<
-	dtrace -o $@ -h -s probes.d
+	$(Q)if test -n $(DTRACE); then\
+	  $(DTRACE) -o $@ -h -s $<; \
+	else \
+	  cp $(<D)/dummy_$(<F) $< ;\
+	fi
 
 clean-local::
 	$(Q)$(RM) ext/extinit.c ext/extinit.$(OBJEXT) ext/ripper/y.output
