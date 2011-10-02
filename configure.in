@@ -281,6 +281,9 @@ fi
 if test x"${build}" != x"${host}"; then
   AC_CHECK_TOOL(CC, gcc)
 fi
+
+AC_CHECK_TOOL(DTRACE, dtrace)
+
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_GCC_TRADITIONAL
