@@ -22,6 +22,7 @@
 #include <float.h>
 #include "constant.h"
 #include "internal.h"
+#include "probes.h"
 
 VALUE rb_cBasicObject;
 VALUE rb_mKernel;
@@ -1675,7 +1676,23 @@ rb_obj_alloc(VALUE klass)
     if (FL_TEST(klass, FL_SINGLETON)) {
 	rb_raise(rb_eTypeError, "can't create instance of singleton class");
     }
+
+    if (RUBY_OBJECT_CREATE_START_ENABLED()) {
+        const char * file = rb_sourcefile();
+        RUBY_OBJECT_CREATE_START(rb_class2name(klass),
+                                 file ? file : "",
+                                 rb_sourceline());
+    }
+
     obj = rb_funcall(klass, ID_ALLOCATOR, 0, 0);
+
+    if (RUBY_OBJECT_CREATE_DONE_ENABLED()) {
+        const char * file = rb_sourcefile();
+        RUBY_OBJECT_CREATE_DONE(rb_class2name(klass),
+                                 file ? file : "",
+                                 rb_sourceline());
+    }
+
     if (rb_obj_class(obj) != rb_class_real(klass)) {
 	rb_raise(rb_eTypeError, "wrong instance allocation");
     }
