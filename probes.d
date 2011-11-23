@@ -12,4 +12,7 @@ provider ruby {
 
   probe raise(const char *, const char *, int);
   probe object__alloc();
+
+  probe object__create__start(const char *, const char *, int);
+  probe object__create__done(const char *, const char *, int);
 };
