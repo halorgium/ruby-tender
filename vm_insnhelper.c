@@ -13,6 +13,7 @@
 #include <math.h>
 #include "constant.h"
 #include "internal.h"
+#include "probes.h"
 
 /* control stack frame */
 
@@ -570,6 +571,14 @@ vm_call_method(rb_thread_t *th, rb_control_frame_t *cfp,
     if (me != 0) {
 	if ((me->flag == 0)) {
 	  normal_method_dispatch:
+	    if(RUBY_FUNCTION_ENTRY_ENABLED()) {
+		RUBY_FUNCTION_ENTRY(
+			rb_obj_classname(recv),
+			rb_id2name(id),
+			rb_sourcefile(),
+			rb_sourceline());
+	    }
+
 	    switch (me->def->type) {
 	      case VM_METHOD_TYPE_ISEQ:{
 		vm_setup_method(th, cfp, recv, num, blockptr, flag, me);

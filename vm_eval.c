@@ -11,8 +11,6 @@
 
 **********************************************************************/
 
-#include "probes.h"
-
 static inline VALUE method_missing(VALUE obj, ID id, int argc, const VALUE *argv, int call_status);
 static inline VALUE rb_vm_set_finish_env(rb_thread_t * th);
 static inline VALUE vm_yield_with_cref(rb_thread_t *th, int argc, const VALUE *argv, const NODE *cref);
@@ -223,14 +221,6 @@ static inline VALUE
 rb_call0(VALUE recv, ID mid, int argc, const VALUE *argv,
 	 call_type scope, VALUE self)
 {
-    if(RUBY_FUNCTION_ENTRY_ENABLED()) {
-	RUBY_FUNCTION_ENTRY(
-		rb_obj_classname(recv),
-		rb_id2name(mid),
-		argc,
-		rb_sourcefile(),
-		rb_sourceline());
-    }
     rb_method_entry_t *me = rb_search_method_entry(recv, mid);
     rb_thread_t *th = GET_THREAD();
     int call_status = rb_method_call_status(th, me, scope, self);
