@@ -7,6 +7,7 @@
 #include "internal.h"
 #include "dln.h"
 #include "eval_intern.h"
+#include "probes.h"
 
 VALUE ruby_dln_librefs;
 
@@ -374,6 +375,14 @@ rb_f_load(int argc, VALUE *argv)
     VALUE fname, wrap, path;
 
     rb_scan_args(argc, argv, "11", &fname, &wrap);
+
+    if(RUBY_LOAD_ENTRY_ENABLED()) {
+      RUBY_LOAD_ENTRY(
+          StringValuePtr(fname),
+          rb_sourcefile(),
+          rb_sourceline());
+    }
+
     path = rb_find_file(FilePathValue(fname));
     if (!path) {
 	if (!rb_file_load_ok(RSTRING_PTR(fname)))
@@ -381,6 +390,11 @@ rb_f_load(int argc, VALUE *argv)
 	path = fname;
     }
     rb_load_internal(path, RTEST(wrap));
+
+    if(RUBY_LOAD_RETURN_ENABLED()) {
+      RUBY_LOAD_RETURN(StringValuePtr(fname));
+    }
+
     return Qtrue;
 }
 
@@ -598,6 +612,13 @@ rb_require_safe(VALUE fname, int safe)
     } volatile saved;
     char *volatile ftptr = 0;
 
+    if(RUBY_REQUIRE_ENTRY_ENABLED()) {
+      RUBY_REQUIRE_ENTRY(
+          StringValuePtr(fname),
+          rb_sourcefile(),
+          rb_sourceline());
+    }
+
     PUSH_TAG();
     saved.safe = rb_safe_level();
     if ((state = EXEC_TAG()) == 0) {
@@ -643,6 +664,10 @@ rb_require_safe(VALUE fname, int safe)
     }
 
     th->errinfo = errinfo;
+
+    if(RUBY_REQUIRE_RETURN_ENABLED()) {
+      RUBY_REQUIRE_RETURN(StringValuePtr(fname));
+    }
 
     return result;
 }
