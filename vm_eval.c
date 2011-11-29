@@ -46,6 +46,17 @@ vm_call0(rb_thread_t* th, VALUE recv, VALUE id, int argc, const VALUE *argv,
 	th->passed_block = 0;
     }
 
+    if(RUBY_FUNCTION_ENTRY_ENABLED()) {
+        const char * file = rb_sourcefile();
+        const char * name = rb_id2name(id);
+
+        RUBY_FUNCTION_ENTRY(
+                rb_obj_classname(recv),
+                name,
+                file ? file : "",
+                rb_sourceline());
+    }
+
   again:
     switch (def->type) {
       case VM_METHOD_TYPE_ISEQ: {
