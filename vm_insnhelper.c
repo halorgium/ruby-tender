@@ -568,14 +568,6 @@ vm_call_method(rb_thread_t *th, rb_control_frame_t *cfp,
 
   start_method_dispatch:
     if (me != 0) {
-        if(RUBY_FUNCTION_ENTRY_ENABLED()) {
-            RUBY_FUNCTION_ENTRY(
-                    rb_class2name(me->klass),
-                    rb_id2name(me->called_id),
-                    rb_sourcefile(),
-                    rb_sourceline());
-        }
-
 	if ((me->flag == 0)) {
 	  normal_method_dispatch:
 	    switch (me->def->type) {
