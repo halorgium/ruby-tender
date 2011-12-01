@@ -872,6 +872,34 @@ trace
 {
     rb_event_flag_t flag = (rb_event_flag_t)nf;
 
+    if (RUBY_FUNCTION_ENTRY_ENABLED()) {
+        if (flag == RUBY_EVENT_CALL || flag == RUBY_EVENT_C_CALL) {
+          VALUE klass;
+          ID called_id;
+
+          rb_thread_method_id_and_class(th, &called_id, &klass);
+
+          RUBY_FUNCTION_ENTRY(
+                  rb_class2name(klass),
+                  rb_id2name(called_id),
+                  rb_sourcefile(),
+                  rb_sourceline());
+        }
+    }
+    if (RUBY_FUNCTION_RETURN_ENABLED()) {
+        if (flag == RUBY_EVENT_RETURN || flag == RUBY_EVENT_C_RETURN) {
+          VALUE klass;
+          ID called_id;
+
+          rb_thread_method_id_and_class(th, &called_id, &klass);
+
+          RUBY_FUNCTION_RETURN(
+                  rb_class2name(klass),
+                  rb_id2name(called_id),
+                  rb_sourcefile(),
+                  rb_sourceline());
+        }
+    }
     EXEC_EVENT_HOOK(th, flag, GET_SELF(), 0, 0 /* TODO: id, klass */);
 }
 
