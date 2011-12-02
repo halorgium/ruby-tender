@@ -426,6 +426,13 @@ vm_call_bmethod(rb_thread_t *th, VALUE recv, int argc, const VALUE *argv,
     rb_proc_t *proc;
     VALUE val;
 
+    if (RUBY_FUNCTION_ENTRY_ENABLED()) {
+	RUBY_FUNCTION_ENTRY(
+		rb_class2name(me->klass),
+		rb_id2name(me->called_id),
+		rb_sourcefile(),
+		rb_sourceline());
+    }
     EXEC_EVENT_HOOK(th, RUBY_EVENT_CALL, recv, me->called_id, me->klass);
 
     /* control block frame */
@@ -433,6 +440,13 @@ vm_call_bmethod(rb_thread_t *th, VALUE recv, int argc, const VALUE *argv,
     GetProcPtr(me->def->body.proc, proc);
     val = rb_vm_invoke_proc(th, proc, recv, argc, argv, blockptr);
 
+    if (RUBY_FUNCTION_RETURN_ENABLED()) {
+	RUBY_FUNCTION_RETURN(
+		rb_class2name(me->klass),
+		rb_id2name(me->called_id),
+		rb_sourcefile(),
+		rb_sourceline());
+    }
     EXEC_EVENT_HOOK(th, RUBY_EVENT_RETURN, recv, me->called_id, me->klass);
 
     return val;
