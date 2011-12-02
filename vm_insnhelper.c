@@ -445,6 +445,18 @@ vm_call_cfunc(rb_thread_t *th, rb_control_frame_t *reg_cfp,
     const rb_method_definition_t *def = me->def;
     rb_control_frame_t *cfp;
 
+    if (RUBY_FUNCTION_ENTRY_ENABLED()) {
+        const char * classname  = rb_class2name(me->klass);
+        const char * methodname = rb_id2name(me->called_id);
+        const char * filename   = rb_sourcefile();
+        if (classname && methodname && filename) {
+            RUBY_FUNCTION_ENTRY(
+                    classname,
+                    methodname,
+                    filename,
+                    rb_sourceline());
+        }
+    }
     EXEC_EVENT_HOOK(th, RUBY_EVENT_C_CALL, recv, me->called_id, me->klass);
 
     cfp = vm_push_frame(th, 0, VM_FRAME_MAGIC_CFUNC,
@@ -460,6 +472,18 @@ vm_call_cfunc(rb_thread_t *th, rb_control_frame_t *reg_cfp,
 
     vm_pop_frame(th);
 
+    if (RUBY_FUNCTION_RETURN_ENABLED()) {
+        const char * classname  = rb_class2name(me->klass);
+        const char * methodname = rb_id2name(me->called_id);
+        const char * filename   = rb_sourcefile();
+        if (classname && methodname && filename) {
+            RUBY_FUNCTION_RETURN(
+                    classname,
+                    methodname,
+                    filename,
+                    rb_sourceline());
+        }
+    }
     EXEC_EVENT_HOOK(th, RUBY_EVENT_C_RETURN, recv, me->called_id, me->klass);
 
     return val;
