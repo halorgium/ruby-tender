@@ -162,6 +162,9 @@ getrusage_time(void)
 }
 
 #define GC_PROF_TIMER_START do {\
+	if (RUBY_GC_BEGIN_ENABLED()) { \
+	    RUBY_GC_BEGIN(); \
+	} \
 	if (objspace->profile.run) {\
 	    if (!objspace->profile.record) {\
 		objspace->profile.size = 1000;\
@@ -181,6 +184,9 @@ getrusage_time(void)
     } while(0)
 
 #define GC_PROF_TIMER_STOP(marked) do {\
+	if (RUBY_GC_END_ENABLED()) { \
+	    RUBY_GC_END(); \
+	} \
 	if (objspace->profile.run) {\
 	    gc_time = getrusage_time() - gc_time;\
 	    if (gc_time < 0) gc_time = 0;\
@@ -2174,11 +2180,17 @@ gc_lazy_sweep(rb_objspace_t *objspace)
 
     during_gc++;
     GC_PROF_TIMER_START;
+    if (RUBY_GC_SWEEP_BEGIN_ENABLED()) {
+	RUBY_GC_SWEEP_BEGIN();
+    }
     GC_PROF_SWEEP_TIMER_START;
 
     if (objspace->heap.sweep_slots) {
         res = lazy_sweep(objspace);
         if (res) {
+	    if (RUBY_GC_SWEEP_END_ENABLED()) {
+		RUBY_GC_SWEEP_END();
+	    }
             GC_PROF_SWEEP_TIMER_STOP;
             GC_PROF_SET_MALLOC_INFO;
             GC_PROF_TIMER_STOP(Qfalse);
@@ -2200,6 +2212,9 @@ gc_lazy_sweep(rb_objspace_t *objspace)
 	set_heaps_increment(objspace);
     }
 
+    if (RUBY_GC_SWEEP_BEGIN_ENABLED()) {
+	RUBY_GC_SWEEP_BEGIN();
+    }
     GC_PROF_SWEEP_TIMER_START;
     if(!(res = lazy_sweep(objspace))) {
         after_gc_sweep(objspace);
@@ -2207,6 +2222,9 @@ gc_lazy_sweep(rb_objspace_t *objspace)
             res = TRUE;
             during_gc = 0;
         }
+    }
+    if (RUBY_GC_SWEEP_END_ENABLED()) {
+	RUBY_GC_SWEEP_END();
     }
     GC_PROF_SWEEP_TIMER_STOP;
 
@@ -2435,6 +2453,9 @@ gc_marks(rb_objspace_t *objspace)
 {
     struct gc_list *list;
     rb_thread_t *th = GET_THREAD();
+    if (RUBY_GC_MARK_BEGIN_ENABLED()) {
+	RUBY_GC_MARK_BEGIN();
+    }
     GC_PROF_MARK_TIMER_START;
 
     objspace->heap.live_num = 0;
@@ -2478,6 +2499,9 @@ gc_marks(rb_objspace_t *objspace)
 	    gc_mark_rest(objspace);
 	}
     }
+    if (RUBY_GC_MARK_END_ENABLED()) {
+	RUBY_GC_MARK_END();
+    }
     GC_PROF_MARK_TIMER_STOP;
 }
 
@@ -2502,8 +2526,14 @@ garbage_collect(rb_objspace_t *objspace)
     during_gc++;
     gc_marks(objspace);
 
+    if (RUBY_GC_SWEEP_BEGIN_ENABLED()) {
+	RUBY_GC_SWEEP_BEGIN();
+    }
     GC_PROF_SWEEP_TIMER_START;
     gc_sweep(objspace);
+    if (RUBY_GC_SWEEP_END_ENABLED()) {
+	RUBY_GC_SWEEP_END();
+    }
     GC_PROF_SWEEP_TIMER_STOP;
 
     GC_PROF_TIMER_STOP(Qtrue);
