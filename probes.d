@@ -23,4 +23,6 @@ provider ruby {
   probe gc__mark__end();
   probe gc__sweep__begin();
   probe gc__sweep__end();
+
+  probe line(const char *, int);
 };

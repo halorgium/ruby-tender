@@ -875,6 +875,12 @@ trace
 {
     rb_event_flag_t flag = (rb_event_flag_t)nf;
 
+    if (RUBY_LINE_ENABLED()) {
+	if (flag == RUBY_EVENT_LINE) {
+          RUBY_LINE(rb_sourcefile(), rb_sourceline());
+	}
+    }
+
     if (RUBY_FUNCTION_ENTRY_ENABLED()) {
         if (flag == RUBY_EVENT_CALL || flag == RUBY_EVENT_C_CALL) {
           VALUE klass;
