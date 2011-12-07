@@ -605,6 +605,7 @@ vm_call_method(rb_thread_t *th, rb_control_frame_t *cfp,
     VALUE val;
 
   start_method_dispatch:
+
     if (me != 0) {
 	if ((me->flag == 0)) {
 	  normal_method_dispatch:
@@ -758,7 +759,6 @@ vm_call_method(rb_thread_t *th, rb_control_frame_t *cfp,
 	if (flag & VM_CALL_SUPER_BIT) {
 	    stat |= NOEX_SUPER;
 	}
-
 	if (id == idMethodMissing) {
 	    VALUE *argv = ALLOCA_N(VALUE, num);
 	    vm_method_missing_args(th, argv, num - 1, 0, stat);
