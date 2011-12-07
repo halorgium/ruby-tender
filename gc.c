@@ -2500,6 +2500,12 @@ obj_free(rb_objspace_t *objspace, VALUE obj)
 	break;
     }
 
+    if (RUBY_OBJECT_FREE_ENABLED())
+    {
+	const char * classname = rb_obj_classname(obj);
+	if (classname)
+	    RUBY_OBJECT_FREE(classname);
+    }
     if (FL_TEST(obj, FL_EXIVAR)) {
 	rb_free_generic_ivar((VALUE)obj);
 	FL_UNSET(obj, FL_EXIVAR);
