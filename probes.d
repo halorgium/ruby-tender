@@ -1,7 +1,4 @@
 provider ruby {
-  probe hash__alloc(const char *, int);
-  probe array__alloc(const char *, int);
-  probe string__alloc(const char *, int);
   probe function__entry(const char *, const char *, const char *, int);
   probe function__return(const char *, const char *, const char *, int);
 
