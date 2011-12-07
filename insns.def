@@ -378,7 +378,15 @@ putstring
 ()
 (VALUE val)
 {
+    if(RUBY_OBJECT_CREATE_START_ENABLED()) {
+	RUBY_OBJECT_CREATE_START("String", rb_sourcefile(), rb_sourceline());
+    }
+
     val = rb_str_resurrect(str);
+
+    if(RUBY_OBJECT_CREATE_DONE_ENABLED()) {
+	RUBY_OBJECT_CREATE_DONE("String", rb_sourcefile(), rb_sourceline());
+    }
 }
 
 /**
@@ -450,7 +458,15 @@ newarray
 (...)
 (VALUE val) // inc += 1 - num;
 {
+    if(RUBY_OBJECT_CREATE_START_ENABLED()) {
+	RUBY_OBJECT_CREATE_START("Array", rb_sourcefile(), rb_sourceline());
+    }
+
     val = rb_ary_new4((long)num, STACK_ADDR_FROM_TOP(num));
+
+    if(RUBY_OBJECT_CREATE_DONE_ENABLED()) {
+	RUBY_OBJECT_CREATE_DONE("Array", rb_sourcefile(), rb_sourceline());
+    }
     POPN(num);
 }
 
@@ -589,7 +605,16 @@ newhash
 (VALUE val) // inc += 1 - num;
 {
     rb_num_t i;
+
+    if(RUBY_OBJECT_CREATE_START_ENABLED()) {
+	RUBY_OBJECT_CREATE_START("Hash", rb_sourcefile(), rb_sourceline());
+    }
+
     val = rb_hash_new();
+
+    if(RUBY_OBJECT_CREATE_DONE_ENABLED()) {
+	RUBY_OBJECT_CREATE_DONE("Hash", rb_sourcefile(), rb_sourceline());
+    }
 
     for (i = num; i > 0; i -= 2) {
 	const VALUE v = TOPN(i - 2);
