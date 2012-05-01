@@ -3,6 +3,8 @@ require 'tempfile'
 
 module DTrace
   class TestCase < MiniTest::Unit::TestCase
+    INCLUDE = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+
     def setup
       skip "must be setuid 0 to run dtrace tests" unless Process.euid == 0
     end
@@ -19,7 +21,7 @@ module DTrace
       d_path  = d.path
       rb_path = rb.path
 
-      cmd = "dtrace -q -s #{d_path} -c '#{Gem.ruby} #{rb_path}'"
+      cmd = "dtrace -q -s #{d_path} -c '#{Gem.ruby} -I#{INCLUDE} #{rb_path}'"
       probes = IO.popen(cmd) do |io|
         io.readlines
       end
