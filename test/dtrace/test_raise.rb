@@ -1,21 +1,29 @@
 require 'dtrace/helper'
 
 module DTrace
-  class TestLoad < TestCase
-    def test_load_entry
+  class TestRaise < TestCase
+    def test_raise
       probe = <<-eoprobe
-ruby#{$$}:::raise
+ruby$target:::raise
 {
   printf("%s %s %d\\n", copyinstr(arg0), copyinstr(arg1), arg2);
 }
       eoprobe
-      saw, line = trap_probe(probe) { 10.times { raise rescue nil } }, __LINE__
-      assert_equal 10, saw.length
-      saw.map { |s| s.split }.each do |(klass, source_file, source_line)|
-	assert_equal 'RuntimeError', klass
-	assert_equal __FILE__, source_file
-	assert_equal line.to_s, source_line
-      end
+      trap_probe(probe, program) { |dpath, rbpath, saw|
+	saw = saw.map(&:split).find_all { |_, source_file, _|
+	  source_file == rbpath
+	}
+	assert_equal 10, saw.length
+	saw.each do |klass, _, source_line|
+	  assert_equal 'RuntimeError', klass
+	  assert_equal '1', source_line
+	end
+      }
+    end
+
+    private
+    def program
+      '10.times { raise rescue nil }'
     end
   end
 end
