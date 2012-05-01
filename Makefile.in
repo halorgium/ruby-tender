@@ -301,10 +301,12 @@ enc/unicode/name2ctype.h: enc/unicode/name2ctype.kwd
 
 .d.h:
 	@$(ECHO) translating probes $<
-	$(Q)if test -n $(DTRACE); then\
+	@$(ECHO) cp $(<D)/dummy_$@ $@ ;
+
+	$(Q)if test -n '$(DTRACE)'; then\
 	  $(DTRACE) -o $@ -h -s $<; \
 	else \
-	  cp $(<D)/dummy_$(<F) $< ;\
+	  cp $(<D)/dummy_$@ $@ ;\
 	fi
 
 clean-local::
