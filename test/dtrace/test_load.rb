@@ -11,7 +11,7 @@ module DTrace
 
     def teardown
       super
-      @rbfile.close(true)
+      @rbfile.close(true) if @rbfile
     end
 
     def test_load_entry
