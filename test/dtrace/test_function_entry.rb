@@ -42,6 +42,7 @@ ruby$target:::function-return
       }
     end
 
+    private
     def ruby_program
       <<-eoruby
       class Foo
