@@ -11,15 +11,18 @@ module DTrace
       gc-sweep-end
     }.each do |probe_name|
       define_method(:"test_#{probe_name.gsub(/-/, '_')}") do
-	probe = "ruby#{$$}:::#{probe_name} { printf(\"#{probe_name}\\n\"); }"
+	probe = "ruby$target:::#{probe_name} { printf(\"#{probe_name}\\n\"); }"
 
-	saw = trap_probe(probe) {
-	  100000.times { Object.new }
-	  GC.start
+	trap_probe(probe, ruby_program) { |_, _, saw|
+	  assert_operator saw.length, :>, 0
 	}
 
-	assert_operator saw.length, :>, 0
       end
+    end
+
+    private
+    def ruby_program
+      "100000.times { Object.new }"
     end
   end
 end
