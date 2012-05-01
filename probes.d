@@ -22,3 +22,9 @@ provider ruby {
 
   probe line(const char *, int);
 };
+
+#pragma D attributes Stable/Evolving/Common provider ruby provider
+#pragma D attributes Stable/Evolving/Common provider ruby module
+#pragma D attributes Stable/Evolving/Common provider ruby function
+#pragma D attributes Evolving/Evolving/Common provider ruby name
+#pragma D attributes Evolving/Evolving/Common provider ruby args

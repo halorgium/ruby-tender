@@ -301,8 +301,6 @@ enc/unicode/name2ctype.h: enc/unicode/name2ctype.kwd
 
 .d.h:
 	@$(ECHO) translating probes $<
-	@$(ECHO) cp $(<D)/dummy_$@ $@ ;
-
 	$(Q)if test -n '$(DTRACE)'; then\
 	  $(DTRACE) -o $@ -h -s $<; \
 	else \
