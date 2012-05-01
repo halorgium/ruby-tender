@@ -3,9 +3,6 @@ require 'tempfile'
 
 module DTrace
   class TestCase < MiniTest::Unit::TestCase
-    PROBE_INFO = {
-      'object-create-start' => 'copyinstr(arg0), copyinstr(arg1), arg2'
-    }
     def setup
       skip "must be setuid 0 to run dtrace tests" unless Process.euid == 0
     end
