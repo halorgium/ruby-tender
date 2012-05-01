@@ -14,10 +14,6 @@ module DTrace
       @rbfile.close(true)
     end
 
-    def program
-      "10.times { load '#{@rbfile.path}' }"
-    end
-
     def test_load_entry
       probe = <<-eoprobe
 ruby$target:::load-entry
@@ -47,6 +43,10 @@ ruby$target:::load-return
 	assert_equal 10, saw.length
       }
     end
+
+    private
+    def program
+      "10.times { load '#{@rbfile.path}' }"
+    end
   end
 end
-
