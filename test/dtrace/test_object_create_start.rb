@@ -2,15 +2,6 @@ require 'dtrace/helper'
 
 module DTrace
   class TestObjectCreateStart < TestCase
-    def probe
-      <<-eoprobe
-ruby$target:::object-create-start
-{
-  printf("%s %s %d\\n", copyinstr(arg0), copyinstr(arg1), arg2);
-}
-      eoprobe
-    end
-
     def test_object_create_start
       trap_probe(probe, '10.times { Object.new }') { |_,rbfile,saw|
         saw = saw.map(&:split).find_all { |_, file, _|
@@ -62,6 +53,16 @@ ruby$target:::object-create-start
         assert_equal([rbfile], saw.map { |line| line[1] })
         assert_equal(['1'], saw.map { |line| line[2] })
       }
+    end
+
+    private
+    def probe
+      <<-eoprobe
+ruby$target:::object-create-start
+{
+  printf("%s %s %d\\n", copyinstr(arg0), copyinstr(arg1), arg2);
+}
+      eoprobe
     end
   end
 end
